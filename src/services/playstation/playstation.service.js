@@ -56,7 +56,15 @@ export async function searchPlayStationGames() {
               PS_SCRAPING.PRICE.VALUE
             );
 
-            // Trailer URL; null if timeoout because some games don't have trailer
+            // Image URL
+            dataObj["image"] = await waitAndSelectOrNullIfTimeout(
+              page,
+              PS_SCRAPING.IMAGE.SELECTOR,
+              PS_SCRAPING.IMAGE.VALUE,
+              TIMEOUT_MS.MIN // small timeout because it should've already loaded by now, and some games don't have images
+            );
+
+            // Trailer URL
             dataObj["trailer"] = await waitAndSelectOrNullIfTimeout(
               page,
               PS_SCRAPING.TRAILER.SELECTOR,

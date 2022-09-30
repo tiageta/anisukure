@@ -19,7 +19,7 @@ export const PUPPETEER_OPTIONS = {
 
 export const TIMEOUT_MS = {
   MIN: 500,
-  MAX: 30000,
+  MAX: 60000,
 };
 
 export const PS_MONTHLY_GAMES_URLS =
@@ -41,6 +41,10 @@ export const PS_SCRAPING = {
   PRICE: {
     SELECTOR: ".game-hero__title-content label:first-child .psw-t-title-m",
     VALUE: "innerHTML",
+  },
+  IMAGE: {
+    SELECTOR: "#buynow article:last-child img[srcset]",
+    VALUE: "src",
   },
   TRAILER: {
     SELECTOR: ".game-hero__gallery .media-block__overlay a",
