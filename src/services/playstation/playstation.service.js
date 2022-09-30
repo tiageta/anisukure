@@ -56,6 +56,18 @@ export async function searchPlayStationGames() {
               PS_SCRAPING.PRICE.VALUE
             );
 
+            // Expiration Date
+            const dateRegexp = /(\d+\/\d+\/\d+)/g;
+            const dirtyDate = await waitAndSelectOrNullIfTimeout(
+              page,
+              PS_SCRAPING.EXPIRATION.SELECTOR,
+              PS_SCRAPING.EXPIRATION.VALUE
+            );
+            dataObj["expiration"] =
+              dirtyDate !== null && dirtyDate.match(dateRegexp)
+                ? dirtyDate.match(dateRegexp)[0]
+                : null;
+
             // Image URL
             dataObj["image"] = await waitAndSelectOrNullIfTimeout(
               page,

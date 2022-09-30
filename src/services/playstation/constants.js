@@ -43,6 +43,10 @@ export const PS_SCRAPING = {
     SELECTOR: ".game-hero__title-content label:first-child .psw-t-title-m",
     VALUE: "innerHTML",
   },
+  EXPIRATION: {
+    SELECTOR: "span.psw-t-overline > span > span:last-child",
+    VALUE: "innerHTML",
+  },
   IMAGE: {
     SELECTOR: "#buynow article:last-child img[srcset]",
     VALUE: "src",
