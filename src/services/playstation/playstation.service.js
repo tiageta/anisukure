@@ -1,10 +1,10 @@
 import puppeteer, { TimeoutError } from "puppeteer";
 import bluebird from "bluebird";
 import {
-  MAX_TIMEOUT_MS,
-  MIN_TIMEOUT_MS,
+  TIMEOUT_MS,
   PS_MONTHLY_GAMES_URLS,
   PS_SCRAPING,
+  PUPPETEER_OPTIONS,
 } from "./constants.js";
 
 export async function searchPlayStationGames() {
@@ -61,12 +61,12 @@ export async function searchPlayStationGames() {
               page,
               PS_SCRAPING.TRAILER.SELECTOR,
               PS_SCRAPING.TRAILER.VALUE,
-              MIN_TIMEOUT_MS // small timeout because it should've already loaded by now, and some games don't have trailers
+              TIMEOUT_MS.MIN // small timeout because it should've already loaded by now, and some games don't have trailers
             );
 
             return dataObj;
           }),
-        { concurrency: 1 }
+        { concurrency: 3 }
       );
     });
   } catch (err) {
@@ -81,7 +81,7 @@ export async function searchPlayStationGames() {
  * @returns {any} Result of callback or null in case of error
  */
 const withBrowser = async (cb) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch(PUPPETEER_OPTIONS);
   try {
     return await cb(browser);
   } catch (err) {
@@ -99,7 +99,9 @@ const withBrowser = async (cb) => {
  */
 const withPage = (browser) => async (cb) => {
   const page = await browser.newPage();
+
   await page.setRequestInterception(true);
+
   page.on("request", (req) => {
     if (
       req.resourceType() === "stylesheet" ||
@@ -131,7 +133,7 @@ const waitAndSelectOrNullIfTimeout = async (
   page,
   selector,
   evalStr,
-  timeout = MAX_TIMEOUT_MS
+  timeout = TIMEOUT_MS.MAX
 ) => {
   try {
     await page.waitForSelector(selector, { timeout });
@@ -154,7 +156,7 @@ const waitAndSelectArrayOrNullIfTimeout = async (
   page,
   selector,
   evalStr,
-  timeout = MAX_TIMEOUT_MS
+  timeout = TIMEOUT_MS.MAX
 ) => {
   try {
     await page.waitForSelector(selector, { timeout });
