@@ -21,7 +21,7 @@ export const PUPPETEER_OPTIONS = {
 };
 
 export const TIMEOUT_MS = {
-  MIN: 2000,
+  MIN: 500,
   MAX: 60000,
 };
 
