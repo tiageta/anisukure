@@ -1,11 +1,12 @@
-import puppeteer, { TimeoutError } from "puppeteer";
 import bluebird from "bluebird";
 import {
   TIMEOUT_MS,
-  PS_MONTHLY_GAMES_URLS,
-  PS_SCRAPING,
-  PUPPETEER_OPTIONS,
-} from "./constants.js";
+  withBrowser,
+  withPage,
+  waitAndSelectOrNullIfTimeout,
+  waitAndSelectArrayOrNullIfTimeout,
+} from "../../utils/scraper.js";
+import { PS_MONTHLY_GAMES_URLS, PS_SCRAPING } from "./constants.js";
 
 export async function searchPlayStationGames() {
   try {
@@ -18,7 +19,7 @@ export async function searchPlayStationGames() {
         return waitAndSelectArrayOrNullIfTimeout(
           page,
           PS_SCRAPING.URL.SELECTOR,
-          "href"
+          PS_SCRAPING.URL.VALUE
         );
       });
 
@@ -36,7 +37,7 @@ export async function searchPlayStationGames() {
             await page.goto(url);
 
             // Game title
-            dataObj["title"] = await await waitAndSelectOrNullIfTimeout(
+            dataObj["title"] = await waitAndSelectOrNullIfTimeout(
               page,
               PS_SCRAPING.TITLE.SELECTOR,
               PS_SCRAPING.TITLE.VALUE
@@ -93,99 +94,3 @@ export async function searchPlayStationGames() {
     return null;
   }
 }
-
-/**
- * Handle to safely open and close browser despite callback result
- * @param {Function} cb Callback that may use created browser
- * @returns {any} Result of callback or null in case of error
- */
-const withBrowser = async (cb) => {
-  const browser = await puppeteer.launch(PUPPETEER_OPTIONS);
-  try {
-    return await cb(browser);
-  } catch (err) {
-    console.error(`Error using browser in callback: ${err.message}`);
-    return null;
-  } finally {
-    await browser.close();
-  }
-};
-
-/**
- * Handle to safely open and close page despite callback result
- * @param {puppeteer.Browser} browser Browser to be passed down to created page
- * @returns {Function} Function to receive callback to be executed with page and browser available, returning result of callback or null in case of error
- */
-const withPage = (browser) => async (cb) => {
-  const page = await browser.newPage();
-
-  await page.setRequestInterception(true);
-
-  page.on("request", (req) => {
-    if (
-      req.resourceType() === "stylesheet" ||
-      req.resourceType() === "font" ||
-      req.resourceType() === "image"
-    )
-      req.abort();
-    else req.continue();
-  });
-  try {
-    return await cb(page);
-  } catch (err) {
-    console.error(`Error using page in callback: ${err.message}`);
-    return null;
-  } finally {
-    await page.close();
-  }
-};
-
-/**
- * Waits for selector to load and returns value from selector based on evalStr or null if timeout
- * @param {puppeteer.Page} page puppeteer page to search for selector
- * @param {puppeteer.Selector} selector puppeteer string corresponding to a DOM element selector
- * @param {string} evalStr string corresponding to DOM property present in selector
- * @param {int} timeout timeout for null return
- * @returns evalStr value in selector or null if timeout
- */
-const waitAndSelectOrNullIfTimeout = async (
-  page,
-  selector,
-  evalStr,
-  timeout = TIMEOUT_MS.MAX
-) => {
-  try {
-    await page.waitForSelector(selector, { timeout });
-    return page.$eval(selector, (el, evalStr) => el[evalStr], evalStr);
-  } catch (err) {
-    if (err instanceof TimeoutError) return null; // Does not stop pipe if timeout
-    throw err;
-  }
-};
-
-/**
- * Waits for selector to load and returns array from selector based on evalStr or null if timeout
- * @param {puppeteer.Page} page puppeteer page to search for selector
- * @param {puppeteer.Selector} selector puppeteer string corresponding to a DOM element selector
- * @param {string} evalStr string corresponding to DOM property present in selector
- * @param {int} timeout timeout for null return
- * @returns evalStr value in selector or null if timeout
- */
-const waitAndSelectArrayOrNullIfTimeout = async (
-  page,
-  selector,
-  evalStr,
-  timeout = TIMEOUT_MS.MAX
-) => {
-  try {
-    await page.waitForSelector(selector, { timeout });
-    return page.$$eval(
-      selector,
-      (list, evalStr) => list.map((el) => el[evalStr]),
-      evalStr
-    );
-  } catch (err) {
-    if (err instanceof TimeoutError) return null; // Does not stop pipe if timeout
-    throw err;
-  }
-};
