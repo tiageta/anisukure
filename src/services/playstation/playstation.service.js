@@ -19,7 +19,7 @@ export async function searchPlayStationGames() {
         return waitAndSelectArrayOrNullIfTimeout(
           page,
           PS_SCRAPING.URL.SELECTOR,
-          "href"
+          PS_SCRAPING.URL.VALUE
         );
       });
 
@@ -37,7 +37,7 @@ export async function searchPlayStationGames() {
             await page.goto(url);
 
             // Game title
-            dataObj["title"] = await await waitAndSelectOrNullIfTimeout(
+            dataObj["title"] = await waitAndSelectOrNullIfTimeout(
               page,
               PS_SCRAPING.TITLE.SELECTOR,
               PS_SCRAPING.TITLE.VALUE
