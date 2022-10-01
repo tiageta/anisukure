@@ -72,8 +72,7 @@ export async function searchPlayStationGames() {
             dataObj["image"] = await waitAndSelectOrNullIfTimeout(
               page,
               PS_SCRAPING.IMAGE.SELECTOR,
-              PS_SCRAPING.IMAGE.VALUE,
-              TIMEOUT_MS.MIN // small timeout because it should've already loaded by now, and some games don't have images
+              PS_SCRAPING.IMAGE.VALUE
             );
 
             // Trailer URL
