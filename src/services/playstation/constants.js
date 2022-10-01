@@ -14,6 +14,8 @@ export const PUPPETEER_OPTIONS = {
     "--no-first-run",
     "--disable-infobars",
     "--disable-breakpad",
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
     "--user-data-dir=./chrome_data", // created in index.js
   ],
 };
