@@ -46,11 +46,11 @@ export const PS_SCRAPING = {
     VALUE: "innerHTML",
   },
   EXPIRATION: {
-    SELECTOR: "span.psw-t-overline > span > span:last-child",
+    SELECTOR: ".psw-t-overline > span > span:last-child",
     VALUE: "innerHTML",
   },
   IMAGE: {
-    SELECTOR: "#buynow article:last-child img[srcset]",
+    SELECTOR: "img.psw-top-right:last-child",
     VALUE: "src",
   },
   TRAILER: {
