@@ -26,7 +26,7 @@ export async function searchXboxGames() {
         );
       });
 
-      if (urls === null) return null;
+      if (urls === null) return; // no games found
 
       // Navigate to each url and retrieve additional information
       return bluebird.map(
