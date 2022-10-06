@@ -12,11 +12,11 @@ export async function searchXboxGames() {
 
     for (let i = 1; i <= numberOfGames; i++) {
       const dataObj = {};
-      dataObj["url"] = localizeUrl(heroInfo[`keyHero${i}link`]);
+      dataObj["link"] = localizeUrl(heroInfo[`keyHero${i}link`]);
       dataObj["title"] = heroInfo[`keyHero${i}headline`];
-      dataObj["img"] = heroInfo[`keyHero${i}imagedesktop`];
+      dataObj["image"] = heroInfo[`keyHero${i}imagedesktop`];
       dataObj["expiration"] = generateExpirationDate();
-      dataObj["description"] = await getDescriptionFromUrl(dataObj["url"]);
+      dataObj["description"] = await getDescriptionFromUrl(dataObj["link"]);
 
       games.push(dataObj);
     }
