@@ -1,7 +1,7 @@
 import puppeteer, { TimeoutError } from "puppeteer";
 
 export const PUPPETEER_OPTIONS = {
-  headless: true,
+  headless: false,
   // See https://github.com/puppeteer/puppeteer/issues/3938 and https://github.com/puppeteer/puppeteer/issues/1718
   args: [
     "--deterministic-fetch",
@@ -53,6 +53,8 @@ export const withPage = (browser) => async (cb) => {
   const page = await browser.newPage();
 
   await page.setRequestInterception(true);
+
+  page.on("console", (msg) => console.log("LOG: " + msg.text()));
 
   page.on("request", (req) => {
     if (
